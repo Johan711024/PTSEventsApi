@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "QCjEXzHKAhSY1oUn0DlQwFjXgUiU0BjIWUGXWwdrvzQ=",
+  "Source": "PTSEventsApi",
+  "BasePath": "_content/PTSEventsApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

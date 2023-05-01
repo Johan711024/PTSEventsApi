@@ -30,4 +30,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//Cors - Allow calling from web browser
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
+
 app.Run();

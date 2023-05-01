@@ -18,7 +18,7 @@ namespace PTSEventsApi.Models
         public long PTSEventId { get; set; }
 
         //Navigation Property
-        public PTSEvent PTSEvent { get; set; } = null!;
+        public PTSEvent? PTSEvent { get; set; }
         
     }
 }

@@ -11,5 +11,5 @@ public class PTSEventsContext : DbContext
 
     public DbSet<PTSEvent> PTSEventItems { get; set; } = null!;
 
-    public DbSet<PTSEvent> Participants { get; set; } = null!;
+    public DbSet<Participant> Participants { get; set; } = null!;
 }

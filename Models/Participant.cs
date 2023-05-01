@@ -14,7 +14,10 @@ namespace PTSEventsApi.Models
         public string? EmailAddress { get; set; }
         public bool AttendRemote { get; set; }
 
+        //Foreign Key
         public long PTSEventId { get; set; }
+
+        //Navigation Property
         public PTSEvent PTSEvent { get; set; } = null!;
         
     }

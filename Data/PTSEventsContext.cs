@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using PTSEventsApi.Core.Entities;
 
-namespace PTSEventsApi.Models;
+namespace PTSEventsApi.Data;
 
 public class PTSEventsContext : DbContext
 {

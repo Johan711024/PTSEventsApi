@@ -5,41 +5,68 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PTSEventsApi.Models;
+using PTSEventsApi.Core.Entities;
+using PTSEventsApi.Core.Repositories;
+using PTSEventsApi.Data;
+using PTSEventsApi.Data.Repositories;
 
 namespace PTSEventsApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/ptsevents")]
     [ApiController]
+    [Produces("application/json")]
     public class PtsEventController : ControllerBase
     {
-        private readonly PTSEventsApiContext _context;
+        private readonly PTSEventsContext _db;
 
-        public PtsEventController(PTSEventsApiContext context)
+        private IUnitOfWork _uow;
+
+        public PtsEventController(PTSEventsContext db)
         {
-            _context = context;
+            _uow = new UnitOfWork(db);
+            _db = db;
         }
+
+
+        
+        [HttpGet]
+        [Route("{name}/participants?includeParticipants={includeParticipants}")]
+        public async Task<ActionResult<IEnumerable<PTSEvent>>> GetPTSEventByName(string name, bool includeParticipants=false)
+        {            
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest();
+            }
+            var ptsevent = await _uow.Events.GetAsync(name, includeParticipants);
+            if (ptsevent == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(ptsevent);
+        }
+
 
         // GET: api/PtsEvent
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PTSEvent>>> GetPTSEvent()
         {
-          if (_context.PTSEvent == null)
+          if (_db.PTSEventItems == null)
           {
               return NotFound();
           }
-            return await _context.PTSEvent.ToListAsync();
+            return await _db.PTSEventItems.ToListAsync();
         }
 
         // GET: api/PtsEvent/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PTSEvent>> GetPTSEvent(long id)
         {
-          if (_context.PTSEvent == null)
+          if (_db.PTSEventItems == null)
           {
               return NotFound();
           }
-            var pTSEvent = await _context.PTSEvent.FindAsync(id);
+            var pTSEvent = await _db.PTSEventItems.FindAsync(id);
 
             if (pTSEvent == null)
             {
@@ -59,11 +86,11 @@ namespace PTSEventsApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(pTSEvent).State = EntityState.Modified;
+            _db.Entry(pTSEvent).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,12 +112,12 @@ namespace PTSEventsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<PTSEvent>> PostPTSEvent(PTSEvent pTSEvent)
         {
-          if (_context.PTSEvent == null)
+          if (_db.PTSEventItems == null)
           {
               return Problem("Entity set 'PTSEventsApiContext.PTSEvent'  is null.");
           }
-            _context.PTSEvent.Add(pTSEvent);
-            await _context.SaveChangesAsync();
+            _db.PTSEventItems.Add(pTSEvent);
+            await _db.SaveChangesAsync();
 
             return CreatedAtAction("GetPTSEvent", new { id = pTSEvent.Id }, pTSEvent);
         }
@@ -99,25 +126,25 @@ namespace PTSEventsApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePTSEvent(long id)
         {
-            if (_context.PTSEvent == null)
+            if (_db.PTSEventItems == null)
             {
                 return NotFound();
             }
-            var pTSEvent = await _context.PTSEvent.FindAsync(id);
+            var pTSEvent = await _db.PTSEventItems.FindAsync(id);
             if (pTSEvent == null)
             {
                 return NotFound();
             }
 
-            _context.PTSEvent.Remove(pTSEvent);
-            await _context.SaveChangesAsync();
+            _db.PTSEventItems.Remove(pTSEvent);
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool PTSEventExists(long id)
         {
-            return (_context.PTSEvent?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_db.PTSEventItems?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

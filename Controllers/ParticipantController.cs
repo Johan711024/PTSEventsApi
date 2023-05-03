@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PTSEventsApi.Models;
+using PTSEventsApi.Core.Entities;
+using PTSEventsApi.Data;
 
 namespace PTSEventsApi.Controllers
 {
@@ -13,9 +14,9 @@ namespace PTSEventsApi.Controllers
     [ApiController]
     public class ParticipantController : ControllerBase
     {
-        private readonly PTSEventsApiContext _context;
+        private readonly PTSEventsContext _context;
 
-        public ParticipantController(PTSEventsApiContext context)
+        public ParticipantController(PTSEventsContext context)
         {
             _context = context;
         }
@@ -24,22 +25,22 @@ namespace PTSEventsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Participant>>> GetParticipant()
         {
-          if (_context.Participant == null)
+          if (_context.Participants == null)
           {
               return NotFound();
           }
-            return await _context.Participant.ToListAsync();
+            return await _context.Participants.ToListAsync();
         }
 
         // GET: api/Participant/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Participant>> GetParticipant(long id)
         {
-          if (_context.Participant == null)
+          if (_context.Participants == null)
           {
               return NotFound();
           }
-            var participant = await _context.Participant.FindAsync(id);
+            var participant = await _context.Participants.FindAsync(id);
 
             if (participant == null)
             {
@@ -85,11 +86,11 @@ namespace PTSEventsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Participant>> PostParticipant(Participant participant)
         {
-          if (_context.Participant == null)
+          if (_context.Participants == null)
           {
               return Problem("Entity set 'PTSEventsApiContext.Participant'  is null.");
           }
-            _context.Participant.Add(participant);
+            _context.Participants.Add(participant);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetParticipant", new { id = participant.Id }, participant);
@@ -99,17 +100,17 @@ namespace PTSEventsApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteParticipant(long id)
         {
-            if (_context.Participant == null)
+            if (_context.Participants == null)
             {
                 return NotFound();
             }
-            var participant = await _context.Participant.FindAsync(id);
+            var participant = await _context.Participants.FindAsync(id);
             if (participant == null)
             {
                 return NotFound();
             }
 
-            _context.Participant.Remove(participant);
+            _context.Participants.Remove(participant);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -117,7 +118,7 @@ namespace PTSEventsApi.Controllers
 
         private bool ParticipantExists(long id)
         {
-            return (_context.Participant?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Participants?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

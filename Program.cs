@@ -1,13 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using PTSEventsApi.Models;
+using PTSEventsApi.Data;
 using Microsoft.Extensions.DependencyInjection;
+using PTSEventsApi.Data.Repositories;
+using PTSEventsApi.Core.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<PTSEventsApiContext>(opt =>
+
+
+builder.Services.AddDbContext<PTSEventsContext>(opt =>
     opt.UseInMemoryDatabase("PTSEvents"));
 
 // Add services to the container.
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<PTSEventsContext>(opt =>
@@ -35,6 +41,5 @@ app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
-
 
 app.Run();

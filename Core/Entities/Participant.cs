@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PTSEventsApi.Models
+namespace PTSEventsApi.Core.Entities
 {
     public class Participant
     {
@@ -17,7 +17,10 @@ namespace PTSEventsApi.Models
         //Foreign Key
         public long PTSEventId { get; set; }
 
-        
-        
+        //Navigation Property
+        public PTSEvent? PTSEvent { get; set; }
+
+
+
     }
 }
